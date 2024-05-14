@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/oh-my-deploy/omd-generate-plugin/utils"
@@ -53,9 +52,9 @@ func newGenerateCommand() *cobra.Command {
 					continue
 				}
 
-				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, true, "default"); err != nil {
-					errs = append(errs, err)
-				}
+				// if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, true, "default"); err != nil {
+				// 	errs = append(errs, err)
+				// }
 				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, *manifest.Spec.ServiceAccount.Create, "sa"); err != nil {
 					errs = append(errs, err)
 				}
@@ -86,10 +85,10 @@ func newGenerateCommand() *cobra.Command {
 }
 
 func generateManifestYaml(w io.Writer, manifest *v1alpha1.Program, isEnabled bool, resourceType string) error {
-	if !isEnabled {
-		return errors.New("this resource is disabled")
-	}
 	resource := createResource(manifest, resourceType)
+	if !isEnabled {
+		return nil
+	}
 	return printYaml(w, resource)
 }
 
