@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var VERSION = "LOCAL"
+var VERSION = "dev"
 
 func InitVersionCmd() *cobra.Command {
 	return createVersionCmd()
