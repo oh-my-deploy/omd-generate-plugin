@@ -97,6 +97,7 @@ func printYaml(w io.Writer, obj any) error {
 	if err != nil {
 		return err
 	}
+	output = strings.ReplaceAll(output, "status: {}", "")
 	fmt.Fprintf(w, "%s---\n", output)
 	return nil
 }
