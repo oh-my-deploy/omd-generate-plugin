@@ -55,24 +55,25 @@ func newGenerateCommand() *cobra.Command {
 				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, true, "default"); err != nil {
 					errs = append(errs, err)
 				}
-				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, *manifest.Spec.ServiceAccount.Create, "sa"); err != nil {
+				isDeploymentEnabled := manifest.Spec.App.AppType == "server" || manifest.Spec.App.AppType == "ssr"
+				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, isDeploymentEnabled, "deployment"); err != nil {
+					errs = append(errs, err)
+				}
+				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, manifest.Spec.ServiceAccount.Create, "sa"); err != nil {
 					errs = append(errs, err)
 				}
 				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, manifest.Spec.Service.Enabled, "service"); err != nil {
 					errs = append(errs, err)
 				}
-				//if manifest.Spec.Ingress.Enabled {
-				//}
-				//
-				//if *manifest.Spec.Scheduler.HorizontalPodAutoScaler.Enabled {
-				//}
-				//
-				//if *manifest.Spec.Scheduler.HorizontalPodAutoScaler.Enabled {
-				//}
-				//
-				//if *manifest.Spec.Scheduler.PodDisruptionBudget.Enabled {
-				//}
-
+				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, manifest.Spec.Ingress.Enabled, "ingress"); err != nil {
+					errs = append(errs, err)
+				}
+				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, manifest.Spec.Scheduler.HorizontalPodAutoScaler.Enabled, "hpa"); err != nil {
+					errs = append(errs, err)
+				}
+				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, manifest.Spec.Scheduler.PodDisruptionBudget.Enabled, "pdb"); err != nil {
+					errs = append(errs, err)
+				}
 			}
 			if len(errs) != 0 {
 				return fmt.Errorf("could not generate manifests: %v", errs)
@@ -85,10 +86,10 @@ func newGenerateCommand() *cobra.Command {
 }
 
 func generateManifestYaml(w io.Writer, manifest *v1alpha1.Program, isEnabled bool, resourceType string) error {
-	resource := createResource(manifest, resourceType)
 	if !isEnabled {
 		return nil
 	}
+	resource := createResource(manifest, resourceType)
 	return printYaml(w, resource)
 }
 
@@ -105,10 +106,18 @@ func printYaml(w io.Writer, obj any) error {
 func createResource(manifest *v1alpha1.Program, resourceType string) any {
 	var resource any
 	switch resourceType {
+	case "deployment":
+		resource = manifest.ConvertToDeployment()
 	case "service":
 		resource = manifest.ConvertToService()
 	case "sa":
 		resource = manifest.ConvertToServiceAccount()
+	case "ingress":
+		resource = manifest.ConvertToIngress()
+	case "hpa":
+		resource = manifest.ConvertToHPA()
+	case "pdb":
+		resource = manifest.ConvertToPdb()
 	default:
 		resource = manifest
 	}
