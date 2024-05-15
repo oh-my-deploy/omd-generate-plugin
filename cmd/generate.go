@@ -52,9 +52,9 @@ func newGenerateCommand() *cobra.Command {
 					continue
 				}
 
-				// if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, true, "default"); err != nil {
-				// 	errs = append(errs, err)
-				// }
+				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, true, "default"); err != nil {
+					errs = append(errs, err)
+				}
 				if err = generateManifestYaml(cmd.OutOrStdout(), &manifest, *manifest.Spec.ServiceAccount.Create, "sa"); err != nil {
 					errs = append(errs, err)
 				}
