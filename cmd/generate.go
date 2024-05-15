@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/oh-my-deploy/omd-generate-plugin/utils"
 	"github.com/oh-my-deploy/omd-operator/api/v1alpha1"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/spf13/cobra"
 )
+
+var re = regexp.MustCompile(`(?s)status:.*$`)
 
 func InitGenerateCmd() *cobra.Command {
 	return newGenerateCommand()
@@ -98,7 +101,9 @@ func printYaml(w io.Writer, obj any) error {
 	if err != nil {
 		return err
 	}
-	output = strings.ReplaceAll(output, "status: {}", "")
+	// output = strings.ReplaceAll(output, "status: {}", "")
+
+	output = re.ReplaceAllString(output, "")
 	fmt.Fprintf(w, "%s---\n", output)
 	return nil
 }
