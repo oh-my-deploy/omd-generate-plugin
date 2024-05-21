@@ -2,7 +2,7 @@ module github.com/oh-my-deploy/omd-generate-plugin
 
 go 1.21.9
 
-require github.com/oh-my-deploy/omd-operator v0.0.7
+require github.com/oh-my-deploy/omd-operator v0.0.8
 
 require (
 	cloud.google.com/go/compute v1.23.0 // indirect
@@ -55,6 +55,7 @@ require (
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-github/v53 v53.2.0 // indirect
+	github.com/google/go-github/v62 v62.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.1 // indirect
